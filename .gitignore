@@ -1,0 +1,6 @@
+screens/
+DEPLOY.md
+*.json
+*.key
+.env
+node_modules/
