@@ -141,7 +141,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 /* Tabbar */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   border-top:1px solid var(--line);padding-bottom:var(--safe-b)}
-.tabbar .wrap{display:grid;grid-template-columns:repeat(3,1fr);height:68px}
+.tabbar .wrap{display:grid;grid-template-columns:repeat(4,1fr);height:68px;padding:0 4px}
 .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12.5px;font-weight:700;color:#9AA0B4}
 .tab svg{width:26px;height:26px}
 .tab.on{color:var(--indigo)}
@@ -194,6 +194,22 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .calc{background:var(--field);border-radius:14px;padding:12px 14px;font-size:15px;color:#41465C;margin:0 0 14px;line-height:1.7}
 .flabel{display:block;font-weight:700;font-size:15px;margin:0 0 8px}
 .sheet{max-height:92vh;overflow-y:auto}
+/* Sparkonto */
+.hero.sv{background:linear-gradient(135deg,#0E9F84,#2BBFC4);box-shadow:0 10px 30px rgba(14,159,132,.28)}
+.hero.sv.neg{background:linear-gradient(135deg,var(--red),var(--red2))}
+.svbtns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.pbar{height:16px;border-radius:9px;background:var(--line);overflow:hidden;margin:4px 0 8px}
+.pbar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#0E9F84,#2FCB8C)}
+.svchart{width:100%;height:auto;display:block}
+.svchart text{font-size:11.5px;fill:var(--muted);font-family:inherit}
+.svchart .vl{font-size:12px;font-weight:800;fill:var(--text)}
+.tfield{width:100%;height:52px;border-radius:14px;border:2px solid transparent;background:var(--field);font:inherit;font-size:17px;padding:0 14px;margin:0 0 12px;outline:none;color:var(--text);-webkit-appearance:none;appearance:none;display:block}
+.tfield:focus{border-color:var(--indigo);background:#fff}
+.check{display:flex;gap:12px;align-items:flex-start;background:var(--field);border-radius:14px;padding:12px 14px;margin:0 0 12px;font-size:15px;font-weight:600;line-height:1.35}
+.check input{width:22px;height:22px;flex:none;margin:0;accent-color:var(--indigo)}
+.left{text-align:left!important}
+.svempty{text-align:center;padding:28px 20px}
+.svempty .e{font-size:56px;display:block;margin-bottom:6px}
 @media (max-width:360px){.hero .big{font-size:38px}.mini .v{font-size:18px}.switch .label{font-size:16px}}
 </style>
 </head>
@@ -301,6 +317,8 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
   </section>
 </main>
 
+<main class="wrap hidden" id="vSave"></main>
+
 <main class="wrap hidden more" id="vMore">
   <section class="card">
     <h2>💾 Backup</h2>
@@ -334,14 +352,15 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
     <h2>🔒 Privat</h2>
     <p>Kein Login, keine Werbung, kein Tracking. Deine Zahlen verlassen dein Handy nie, außer du speicherst selbst ein Backup.</p>
     <button class="btn danger block" id="wipeBtn">Alle Daten löschen</button>
-    <p class="hint">Mein Budget · Version 1.1</p>
+    <p class="hint">Mein Budget · Version 1.2</p>
   </section>
 </main>
 
 <nav class="tabbar"><div class="wrap">
   <button class="tab on" data-tab="month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>Monat</button>
   <button class="tab" data-tab="year"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 20V12M10 20V6M15 20v-9M20 20V4"/></svg>Jahr</button>
-  <button class="tab" data-tab="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Backup &amp; Hilfe</button>
+  <button class="tab" data-tab="save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.5" rx="7" ry="2.8"/><path d="M5 5.5v6c0 1.6 3.1 2.8 7 2.8s7-1.2 7-2.8v-6"/><path d="M5 11.5v6c0 1.6 3.1 2.8 7 2.8s7-1.2 7-2.8v-6"/></svg>Sparen</button>
+  <button class="tab" data-tab="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Backup</button>
 </div></nav>
 
 <div class="sheetbg" id="sheetBg"></div>
@@ -396,7 +415,8 @@ function migrate(){
   // v1 -> v2: Tagesbudget-Einstellungen ergänzen (bestehende Monatsdaten bleiben unverändert)
   var ch=false;
   if(!data.daily||typeof data.daily!=='object'){data.daily={start:iso(new Date()),override:0};ch=true}
-  if(!data.version||data.version<2){data.version=2;ch=true}
+  if(data.savings===undefined){data.savings=null;ch=true}
+  if(!data.version||data.version<3){data.version=3;ch=true}
   if(ch)save();
 }
 migrate();
@@ -642,7 +662,7 @@ function buildInputs(){
   var k=key(cur.y,cur.m),m=getM(k)||{inc:{},exp:{}};
   function row(kind,it,val,bg){
     return '<div class="row"><span class="ic" style="background:'+bg+'">'+it.icon+'</span>'+
-      '<label for="f_'+kind+'_'+it.id+'">'+esc(it.name)+(it.hint?'<small>'+esc(it.hint)+'</small>':'')+'</label>'+
+      '<label for="f_'+kind+'_'+it.id+'">'+esc(it.name)+((it.id==='sparen'&&data.savings)?'<small>Geht automatisch aufs '+esc(data.savings.name||'Sparkonto')+'</small>':it.hint?'<small>'+esc(it.hint)+'</small>':'')+'</label>'+
       '<div class="money"><input id="f_'+kind+'_'+it.id+'" data-kind="'+kind+'" data-id="'+it.id+'" inputmode="decimal" enterkeyhint="next" autocomplete="off" placeholder="0,00" value="'+fmtInput(val)+'"></div></div>';
   }
   $('incInputs').innerHTML=INC.map(function(i){return row('inc',i,m.inc[i.id],'#EEF0FE')}).join('');
@@ -718,15 +738,156 @@ function renderYear(){
   $('yList').innerHTML=list||'<li style="cursor:default"><span class="d" style="grid-column:1/-1">Sobald du Monate einträgst, erscheinen sie hier.</span></li>';
 }
 
+/* ---------- Sparkonto ---------- */
+function mkey(iso){return iso.slice(0,7)}
+function nextKey(k){var y=+k.slice(0,4),m=+k.slice(5,7);if(m===12){y++;m=1}else m++;return y+'-'+(m<10?'0':'')+m}
+function kName(k){return MONTHS[+k.slice(5,7)-1]+' '+k.slice(0,4)}
+function fmtDate(iso){var p=iso.split('-');return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString('de-AT',{day:'numeric',month:'long',year:'numeric'})}
+function lastDayIso(k){return k+'-'+String(dim(+k.slice(0,4),+k.slice(5,7)-1)).padStart(2,'0')}
+function svFirstKey(s){var k=mkey(s.start);return s.skipFirst?nextKey(k):k}
+// Alle Bewegungen: Start, automatische Sparen-Raten (ab Startmonat bis heute), manuelle Buchungen
+function svMoves(){
+  var s=data.savings;if(!s)return [];
+  var today=iso(new Date()),ck=mkey(today),mv=[{d:s.start,a:r2(s.startBal),kind:'start',o:0}];
+  for(var k=svFirstKey(s);k<=ck;k=nextKey(k)){
+    var m=getM(k),v=m&&m.exp&&m.exp.sparen||0;
+    if(v){var d=k===ck?today:lastDayIso(k);if(d<s.start)d=s.start;mv.push({d:d,a:r2(v),kind:'auto',k:k,o:1})}
+  }
+  (s.entries||[]).forEach(function(e){mv.push({d:e.d,a:r2(e.a),kind:e.a<0?'out':'in',id:e.id,n:e.n||'',o:2})});
+  mv.sort(function(a,b){return a.d<b.d?-1:a.d>b.d?1:a.o-b.o});
+  return mv;
+}
+function svBalance(upTo){var b=0;svMoves().forEach(function(x){if(!upTo||x.d<=upTo)b+=x.a});return r2(b)}
+function svRate(){var t=new Date(),k=key(t.getFullYear(),t.getMonth()),m=getM(k);var v=m&&m.exp.sparen||0;if(!v){var pk=key(t.getMonth()?t.getFullYear():t.getFullYear()-1,(t.getMonth()+11)%12),pm=getM(pk);v=pm&&pm.exp.sparen||0}return v}
+function svChart(){
+  var s=data.savings,today=iso(new Date()),ck=mkey(today),pts=[{l:'Start',v:svBalance(s.start)}];
+  for(var k=mkey(s.start);k<=ck;k=nextKey(k)){var mo=+k.slice(5,7)-1;pts.push({l:MSHORT[mo]+(mo===0?' '+k.slice(2,4):''),v:svBalance(k===ck?today:lastDayIso(k))})}
+  if(pts.length>13)pts=pts.slice(pts.length-13);
+  var vals=pts.map(function(p){return p.v}),mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals);
+  var goal=+s.goal||0;if(goal>mx&&goal<=mx*1.4)mx=goal;
+  var pad=(mx-mn)*0.15||Math.max(Math.abs(mx)*0.1,50);mn=mn-pad;mx=mx+pad;if(mn<0&&Math.min.apply(null,vals)>=0)mn=0;
+  var W=360,H=190,L=14,R=14,T=26,B=28,cw=W-L-R,chh=H-T-B,n=pts.length;
+  function X(i){return n===1?W/2:L+cw*i/(n-1)}function Y(v){return T+chh-(v-mn)/(mx-mn)*chh}
+  var g='<svg class="svchart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Kontostand im Verlauf">';
+  g+='<defs><linearGradient id="svg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0E9F84" stop-opacity=".28"/><stop offset="1" stop-color="#0E9F84" stop-opacity="0"/></linearGradient></defs>';
+  if(goal&&goal>=mn&&goal<=mx){var gy=Y(goal);g+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+gy+'" y2="'+gy+'" stroke="#F7882F" stroke-width="1.5" stroke-dasharray="5 4"/><text x="'+(W-R)+'" y="'+(gy-5)+'" text-anchor="end" style="fill:#D46A12;font-weight:700">Ziel</text>'}
+  var line=pts.map(function(p,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Y(p.v).toFixed(1)}).join(' ');
+  g+='<path d="'+line+' L'+X(n-1).toFixed(1)+' '+(T+chh)+' L'+X(0).toFixed(1)+' '+(T+chh)+' Z" fill="url(#svg1)"/>';
+  g+='<path d="'+line+'" fill="none" stroke="#0E9F84" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>';
+  pts.forEach(function(p,i){var last=i===n-1;
+    g+='<circle cx="'+X(i)+'" cy="'+Y(p.v)+'" r="'+(last?5.5:3.5)+'" fill="'+(last?'#0E9F84':'#fff')+'" stroke="#0E9F84" stroke-width="2"/>';
+    if(i===0||last)g+='<text class="vl" x="'+X(i)+'" y="'+(Y(p.v)-10)+'" text-anchor="'+(n===1?'middle':i===0?'start':'end')+'">'+nf0.format(Math.round(p.v))+'\u00a0€</text>';
+    if(n<=7||i===0||(i>1&&i%2===(n-1)%2)||last)g+='<text x="'+X(i)+'" y="'+(H-8)+'" text-anchor="'+(i===0&&n>1?'start':last&&n>1?'end':'middle')+'"'+(last?' style="fill:#1E2235;font-weight:800"':'')+'>'+esc(p.l)+'</text>';
+  });
+  return g+'</svg>';
+}
+function renderSave(){
+  var s=data.savings,v=$('vSave');
+  if(!s){
+    v.innerHTML='<section class="card svempty"><span class="e">🐷</span><h2>Dein Sparkonto</h2>'+
+      '<p class="sub" style="margin-top:6px">Trag einmal ein, wie viel jetzt drauf ist. Danach rechnet die App selbst weiter: Dein Betrag bei „Sparen“ im Monat wird automatisch dazugezählt.</p>'+
+      '<button class="btn primary block" data-act="setup">Sparkonto einrichten</button></section>';
+    return;
+  }
+  var bal=svBalance(),mv=svMoves(),goal=+s.goal||0,since=r2(bal-s.startBal),h='';
+  h+='<section class="hero sv'+(bal<0?' neg':'')+'"><div class="t">🐷 '+esc(s.name||'Sparkonto')+'</div><div class="big">'+eur(bal)+'</div>'+
+     '<div class="s">Kontostand heute'+(since?' · seit '+new Date(s.start.slice(0,4),+s.start.slice(5,7)-1,+s.start.slice(8,10)).toLocaleDateString('de-AT',{day:'numeric',month:'numeric'})+' '+signed(since):'')+'</div></section>';
+  h+='<div class="svbtns"><button class="btn primary" data-act="in">＋ Einzahlung</button><button class="btn soft" data-act="out">− Abhebung</button></div>';
+  if(goal>0){
+    var pc=Math.max(0,Math.min(100,bal/goal*100)),rest=r2(goal-bal),rate=svRate(),est='';
+    if(rest>0&&rate>0){var nm=Math.ceil(rest/rate),t=new Date(),ed=new Date(t.getFullYear(),t.getMonth()+nm,1);est='<br>Mit '+eur(rate)+' im Monat schaffst du das in etwa '+nm+(nm===1?' Monat':' Monaten')+' ('+MONTHS[ed.getMonth()]+' '+ed.getFullYear()+').'}
+    h+='<section class="card"><div class="sectiontitle"><h2>🎯 Sparziel</h2><span class="pill in">'+nf0.format(Math.floor(pc))+'\u00a0%</span></div>'+
+       '<p class="sub">'+eur(bal)+' von '+eur(goal)+'</p><div class="pbar"><i style="width:'+pc.toFixed(1)+'%"></i></div>'+
+       '<p class="hint left">'+(rest>0?'Noch <b>'+eur(rest)+'</b> bis zum Ziel.'+est:'Ziel erreicht! 🎉')+'</p></section>';
+  }
+  h+='<section class="card"><h2>Verlauf</h2><p class="sub">Kontostand Monat für Monat</p>'+svChart()+'</section>';
+  var li='';
+  mv.slice().reverse().forEach(function(x){
+    var ic,nm,sm,col=x.a<0?'tneg':'tpos',del='';
+    if(x.kind==='start'){ic='🏁';nm='Startguthaben';sm=fmtDate(x.d);col=''}
+    else if(x.kind==='auto'){ic='🐷';nm='Sparen im '+kName(x.k).split(' ')[0];sm='automatisch aus dem Monatsbudget'}
+    else{ic=x.kind==='in'?'⬆️':'⬇️';nm=x.kind==='in'?'Einzahlung':'Abhebung';sm=fmtDate(x.d)+(x.n?' · '+esc(x.n):'');del='<button class="x" aria-label="Löschen" data-sdel="'+x.id+'">✕</button>'}
+    li+='<li><span class="ic" style="background:#E3F6F1">'+ic+'</span><span class="nm">'+nm+'<small>'+sm+'</small></span><span class="a '+col+'">'+(x.kind==='start'?eur(x.a):signed(x.a))+'</span>'+del+'</li>';
+  });
+  h+='<section class="card"><h2>Buchungen</h2><p class="sub">Neueste zuerst</p><ul class="elist">'+li+'</ul></section>';
+  h+='<section class="card more"><h2>So funktioniert’s</h2>'+
+     '<p>Ab <b>'+kName(svFirstKey(s))+'</b> wird dein Betrag bei „Sparen“ im Monat automatisch aufs Sparkonto gebucht. Ändert sich der Betrag im Monat, ändert er sich auch hier.</p>'+
+     '<p><b>Einzahlung</b> ist für Extra-Geld, das nicht im Monatsbudget steht (z. B. Weihnachtsgeld). <b>Abhebung</b> ändert dein Monatsbudget nicht, weil das Geld nur vom Sparkonto aufs Girokonto wandert. Gibst du es dann aus, trag es wie gewohnt bei den Ausgaben ein.</p>'+
+     '<button class="btn ghost block" data-act="edit">⚙ Sparkonto bearbeiten</button></section>';
+  v.innerHTML=h;
+}
+function setupForm(edit){
+  var s=data.savings||{},t=new Date(),stK=edit?mkey(s.start):key(t.getFullYear(),t.getMonth()),stM=kName(stK).split(' ')[0];
+  var m=getM(stK),sp=m&&m.exp.sparen||0;
+  openSheet2('<h2 class="shT">'+(edit?'Sparkonto bearbeiten':'Sparkonto einrichten')+'</h2>'+
+    '<label class="flabel" for="suName">Name (optional)</label><input class="tfield" id="suName" maxlength="40" placeholder="Sparkonto" value="'+esc(s.name||'')+'">'+
+    '<label class="flabel" for="suBal">'+(edit?'Kontostand am '+fmtDate(s.start):'Aktueller Kontostand')+'</label><div class="money big"><input id="suBal" inputmode="decimal" autocomplete="off" placeholder="0,00" value="'+(edit?fmtInput(s.startBal):'')+'"></div>'+
+    '<label class="flabel" for="suGoal">Sparziel (optional)</label><div class="money big"><input id="suGoal" inputmode="decimal" autocomplete="off" placeholder="kein Ziel" value="'+fmtInput(+s.goal||0)+'"></div>'+
+    '<label class="check"><input type="checkbox" id="suSkip"'+(s.skipFirst?' checked':'')+'><span>Mein „Sparen“-Betrag vom '+stM+(sp?' ('+eur(sp)+')':'')+' ist in diesem Kontostand schon drin</span></label>'+
+    '<div class="calc" id="suInfo"></div>'+
+    '<button class="btn primary block" id="suSave">Speichern</button>'+
+    (edit?'<button class="btn danger block" id="suDel" style="margin-top:10px">Sparkonto entfernen</button>':''));
+  function info(){var k=$('suSkip').checked?nextKey(stK):stK;$('suInfo').innerHTML='Ab <b>'+kName(k)+'</b> wird dein Betrag bei „Sparen“ im Monat automatisch dazugezählt. So wird nichts doppelt gerechnet.'}
+  info();$('suSkip').onchange=info;
+}
+function saveSetup(){
+  var old=data.savings,bal=parseMoney($('suBal').value),goal=parseMoney($('suGoal').value);
+  if(!old&&!String($('suBal').value).trim()){toast('Bitte den Kontostand eintragen (auch 0 geht).');$('suBal').focus();return}
+  data.savings={name:String($('suName').value||'').trim().slice(0,40),start:old?old.start:iso(new Date()),startBal:bal,goal:goal>0?goal:0,skipFirst:$('suSkip').checked,entries:old?old.entries||[]:[]};
+  save();closeSheet2();render();toast(old?'Gespeichert ✓':'Sparkonto eingerichtet ✓');
+}
+var svType='in';
+function entryForm(type){
+  svType=type;var s=data.savings,today=iso(new Date());
+  openSheet2('<h2 class="shT">Buchung eintragen</h2>'+
+    '<div class="seg"><button data-sty="in" class="'+(type==='in'?'on':'')+'">Einzahlung</button><button data-sty="out" class="'+(type==='out'?'on':'')+'">Abhebung</button></div>'+
+    '<div class="money big"><input id="svAmt" inputmode="decimal" autocomplete="off" placeholder="0,00" aria-label="Betrag"></div>'+
+    '<label class="flabel" for="svDate">Datum</label><input class="tfield" type="date" id="svDate" value="'+today+'" min="'+s.start+'" max="'+today+'">'+
+    '<label class="flabel" for="svNote">Notiz (optional)</label><input class="tfield" id="svNote" maxlength="60" placeholder="z. B. Weihnachtsgeld">'+
+    '<button class="btn primary block" id="svSave">Speichern</button>'+
+    '<p class="hint" id="svHint"></p>');
+  svHint();setTimeout(function(){var i=$('svAmt');if(i)i.focus()},280);
+}
+function svHint(){var h=$('svHint');if(h)h.textContent=svType==='out'?'Eine Abhebung ändert dein Monatsbudget nicht. Gibst du das Geld aus, trag es bei den Ausgaben ein.':'Regelmäßiges Sparen trägst du besser im Monat bei „Sparen“ ein, das wird automatisch gebucht.'}
+function saveEntry(){
+  var a=parseMoney($('svAmt').value),d=$('svDate').value,s=data.savings,today=iso(new Date());
+  if(!(a>0)){toast('Bitte einen Betrag eintragen.');$('svAmt').focus();return}
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d))d=today;
+  if(d<s.start){toast('Datum vor dem Start ('+fmtDate(s.start)+') geht nicht.');return}
+  if(d>today)d=today;
+  s.entries=s.entries||[];s.entries.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),d:d,a:svType==='out'?-a:a,n:String($('svNote').value||'').trim().slice(0,60)});
+  save();closeSheet2();render();toast((svType==='out'?'Abhebung ':'Einzahlung ')+eur(a)+' gespeichert ✓');
+}
+$('vSave').onclick=function(e){
+  var b=e.target.closest('button');if(!b)return;var act=b.getAttribute('data-act');
+  if(act==='setup')setupForm(false);else if(act==='edit')setupForm(true);else if(act==='in'||act==='out')entryForm(act);
+  var id=b.getAttribute('data-sdel');
+  if(id){var s=data.savings,i=(s.entries||[]).findIndex(function(x){return x.id===id});if(i<0)return;var en=s.entries[i];
+    if(confirm((en.a<0?'Abhebung ':'Einzahlung ')+eur(Math.abs(en.a))+' vom '+fmtDate(en.d)+' löschen?')){s.entries.splice(i,1);save();render();toast('Gelöscht')}}
+};
+$('sheet2Body').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  if(b.hasAttribute('data-sty')){svType=b.getAttribute('data-sty');Array.prototype.forEach.call(document.querySelectorAll('#sheet2Body [data-sty]'),function(x){x.classList.toggle('on',x===b)});svHint();return}
+  if(b.id==='suSave')saveSetup();
+  if(b.id==='svSave')saveEntry();
+  if(b.id==='suDel'){if(confirm('Sparkonto mit allen Buchungen entfernen? Deine Monatsdaten bleiben erhalten.')){data.savings=null;save();closeSheet2();render();toast('Sparkonto entfernt')}}
+});
+function cleanSavings(x){
+  if(!x||typeof x!=='object'||!/^\d{4}-\d{2}-\d{2}$/.test(x.start))return null;
+  return {name:String(x.name||'').slice(0,40),start:x.start,startBal:Math.round((+x.startBal||0)*100)/100,goal:+x.goal>0?Math.round(+x.goal*100)/100:0,skipFirst:!!x.skipFirst,
+    entries:(Array.isArray(x.entries)?x.entries:[]).filter(function(e){return e&&/^\d{4}-\d{2}-\d{2}$/.test(e.d)&&+e.a}).map(function(e){return {id:String(e.id||Math.random().toString(36).slice(2)),d:e.d,a:Math.round(+e.a*100)/100,n:String(e.n||'').slice(0,60)}})};
+}
+
 /* ---------- Navigation ---------- */
 function render(){
-  if(tab==='month')renderMonth();else if(tab==='year')renderYear();
-  
-  $('switcher').classList.toggle('hidden',tab==='more');$('brand').classList.toggle('hidden',tab!=='more');$('switcher').classList.toggle('yr',tab==='year');
+  if(tab==='month')renderMonth();else if(tab==='year')renderYear();else if(tab==='save')renderSave();
+  var plain=(tab==='more'||tab==='save');
+  $('switcher').classList.toggle('hidden',plain);$('brand').classList.toggle('hidden',!plain);$('switcher').classList.toggle('yr',tab==='year');
+  $('hdrTitle').textContent=tab==='save'?((data.savings&&data.savings.name)||'Sparkonto'):'Backup & Hilfe';
 }
 function setTab(t){
   tab=t;
-  $('vMonth').classList.toggle('hidden',t!=='month');$('vYear').classList.toggle('hidden',t!=='year');$('vMore').classList.toggle('hidden',t!=='more');
+  $('vMonth').classList.toggle('hidden',t!=='month');$('vYear').classList.toggle('hidden',t!=='year');$('vMore').classList.toggle('hidden',t!=='more');$('vSave').classList.toggle('hidden',t!=='save');
   Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(b){b.classList.toggle('on',b.getAttribute('data-tab')===t)});
   if(t==='month')buildInputs();
   if(t==='more')showLastBackup();
@@ -785,7 +946,7 @@ function showLastBackup(){$('lastBackup').textContent=data.lastBackup?'Letztes B
 $('exportBtn').onclick=function(){
   var d=new Date(),name='Budget-Backup-'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.json';
   data.lastBackup=d.toISOString();save();
-  var json=JSON.stringify({app:'MeinBudget',version:2,exported:d.toISOString(),months:data.months,daily:{start:data.daily.start,override:+data.daily.override||0}},null,2);
+  var json=JSON.stringify({app:'MeinBudget',version:3,exported:d.toISOString(),months:data.months,daily:{start:data.daily.start,override:+data.daily.override||0},savings:data.savings||null},null,2);
   var blob=new Blob([json],{type:'application/json'});
   var file;try{file=new File([blob],name,{type:'application/json'})}catch(e){}
   if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
@@ -813,6 +974,7 @@ $('importFile').onchange=function(e){
       var n=Object.keys(clean).length;
       if(!confirm('Backup mit '+n+(n===1?' Monat':' Monaten')+' laden? Die Zahlen auf diesem Handy werden dadurch ersetzt.'))return;
       data.months=clean;
+      if(d.savings!==undefined)data.savings=cleanSavings(d.savings);
       if(d.daily&&typeof d.daily==='object'){data.daily.override=+d.daily.override>0?Math.round(+d.daily.override*100)/100:0;if(/^\d{4}-\d{2}-\d{2}$/.test(d.daily.start))data.daily.start=d.daily.start;}
       save();buildInputs();render();toast('Backup geladen ✓ ('+n+(n===1?' Monat)':' Monate)'));
     }catch(err){alert('Diese Datei ist leider kein gültiges Budget-Backup.')}
@@ -820,7 +982,7 @@ $('importFile').onchange=function(e){
 };
 $('wipeBtn').onclick=function(){
   if(confirm('Wirklich ALLE Budget-Daten auf diesem Handy löschen?')&&confirm('Ganz sicher? Das kann man nicht rückgängig machen (außer mit einem Backup).')){
-    data={version:2,months:{},daily:{start:iso(new Date()),override:0}};save();toast('Alle Daten gelöscht');showLastBackup();
+    data={version:3,months:{},daily:{start:iso(new Date()),override:0},savings:null};save();toast('Alle Daten gelöscht');showLastBackup();
   }
 };
 
