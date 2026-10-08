@@ -163,6 +163,37 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
   padding:12px 18px;border-radius:14px;font-weight:600;font-size:15px;opacity:0;transition:.25s;z-index:60;pointer-events:none;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .hidden{display:none!important}
+/* Tagesbudget */
+.hero>*{position:relative;z-index:1}
+.hero.day .tmrw{display:inline-block;margin-top:12px;background:rgba(255,255,255,.22);border-radius:999px;padding:7px 13px;font-weight:700;font-size:15px}
+.heroBtn{display:flex;width:100%;margin-top:14px;background:#fff;color:var(--green);box-shadow:0 4px 12px rgba(0,0,0,.10)}
+.hero.neg .heroBtn{color:var(--red)} .hero.zero .heroBtn{color:var(--indigo)}
+.dbars{width:100%;height:auto;display:block;margin-top:2px}
+.dbars text{font-size:11.5px;fill:var(--muted);font-family:inherit}
+.dbars .cur{fill:var(--text);font-weight:800}
+.dbars .val{font-size:11px;font-weight:800}
+.elist{list-style:none;margin:6px 0 0;padding:0}
+.elist .grp{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:12px 0 2px;border:0}
+.elist li{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.elist li.grp+li{border-top:0}
+.elist .ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:19px;flex:none}
+.elist .nm{flex:1;font-weight:600;font-size:15px;min-width:0}
+.elist .nm small{display:block;color:var(--muted);font-size:12.5px;font-weight:500}
+.elist .a{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.elist .x{width:40px;height:40px;border-radius:12px;background:var(--field);color:var(--muted);font-size:17px;flex:none}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--field);border-radius:14px;padding:4px;gap:4px;margin-bottom:12px}
+.seg button{height:44px;border-radius:11px;font-weight:700;color:var(--muted)}
+.seg button.on{background:#fff;color:var(--indigo);box-shadow:var(--shadow)}
+.money.big{width:100%;max-width:none;margin-bottom:12px}
+.money.big input{height:64px;font-size:28px;text-align:center;padding:0 40px}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.chips button{min-height:64px;border-radius:14px;background:var(--field);font-weight:700;font-size:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:2px solid transparent;line-height:1.15;padding:4px}
+.chips button span{font-size:22px}
+.chips button.on{background:#EEF0FE;border-color:var(--indigo);color:var(--indigo)}
+.shT{font-size:20px;font-weight:800;margin:0 0 12px}
+.calc{background:var(--field);border-radius:14px;padding:12px 14px;font-size:15px;color:#41465C;margin:0 0 14px;line-height:1.7}
+.flabel{display:block;font-weight:700;font-size:15px;margin:0 0 8px}
+.sheet{max-height:92vh;overflow-y:auto}
 @media (max-width:360px){.hero .big{font-size:38px}.mini .v{font-size:18px}.switch .label{font-size:16px}}
 </style>
 </head>
@@ -177,8 +208,22 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 </div></header>
 
 <main class="wrap" id="vMonth">
+  <section class="hero day hidden" id="dayHero">
+    <div class="t" id="dayT">Heute noch verfügbar</div>
+    <div class="big" id="dayBig">0,00 €</div>
+    <div class="s" id="daySub"></div>
+    <div class="tmrw" id="dayTmrw"></div>
+    <button class="btn heroBtn" id="dayAdd">＋ Ausgabe eintragen</button>
+  </section>
+  <section class="card hidden" id="dayCard">
+    <div class="sectiontitle"><h2>Tagesbudget</h2><button class="pill in" id="daySet">✎ Ändern</button></div>
+    <p class="sub" id="dayInfo"></p>
+    <div id="dayBars"></div>
+    <ul class="elist" id="dayList"></ul>
+  </section>
+
   <section class="hero" id="hero">
-    <div class="t">Bleibt übrig</div>
+    <div class="t">Bleibt übrig im Monat</div>
     <div class="big" id="restBig">0,00 €</div>
     <div class="s" id="restSub"></div>
   </section>
@@ -289,7 +334,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
     <h2>🔒 Privat</h2>
     <p>Kein Login, keine Werbung, kein Tracking. Deine Zahlen verlassen dein Handy nie, außer du speicherst selbst ein Backup.</p>
     <button class="btn danger block" id="wipeBtn">Alle Daten löschen</button>
-    <p class="hint">Mein Budget · Version 1.0</p>
+    <p class="hint">Mein Budget · Version 1.1</p>
   </section>
 </main>
 
@@ -306,6 +351,8 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
   <div class="mgrid" id="mgrid"></div>
   <button class="btn ghost block" id="todayBtn" style="margin-top:12px">Aktueller Monat</button>
 </div>
+<div class="sheetbg" id="sheet2Bg"></div>
+<div class="sheet" id="sheet2"><div class="grab"></div><div id="sheet2Body"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -344,6 +391,15 @@ function save(){
   data.updated=new Date().toISOString();
   try{localStorage.setItem(STORE,JSON.stringify(data))}catch(e){toast('Speichern nicht möglich – bitte Backup machen!')}
 }
+function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function migrate(){
+  // v1 -> v2: Tagesbudget-Einstellungen ergänzen (bestehende Monatsdaten bleiben unverändert)
+  var ch=false;
+  if(!data.daily||typeof data.daily!=='object'){data.daily={start:iso(new Date()),override:0};ch=true}
+  if(!data.version||data.version<2){data.version=2;ch=true}
+  if(ch)save();
+}
+migrate();
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 
 /* ---------- Helpers ---------- */
@@ -425,6 +481,162 @@ function barChart(y){
   return s+'</svg>';
 }
 
+/* ---------- Tagesbudget ---------- */
+var VARCATS=['lebensm','drogerie','freizeit','auto','kleidung','sonstiges'];
+var WD=['So','Mo','Di','Mi','Do','Fr','Sa'];
+function r2(n){return Math.round((n||0)*100)/100}
+function dim(y,m){return new Date(y,m+1,0).getDate()}
+function signed(n){n=r2(n);return (n>0?'+':'')+eur(n)}
+function autoParts(y,mo){
+  var t=totals(getM(key(y,mo))),fix=0;
+  CATS.forEach(function(c){if(c.fix)fix+=t.by[c.id]||0});
+  var sp=t.by.sparen||0,avail=r2(t.inc-fix-sp),n=dim(y,mo);
+  return {inc:t.inc,fix:r2(fix),sp:sp,avail:avail,days:n,base:avail>0?Math.floor(avail/n*100)/100:0};
+}
+function baseFor(y,mo){var o=+data.daily.override;return o>0?o:autoParts(y,mo).base}
+function dayEntries(y,mo,d){var m=getM(key(y,mo));return (m&&m.days&&m.days[d])||[]}
+function daySpent(y,mo,d){return r2(dayEntries(y,mo,d).reduce(function(s,e){return s+(+e.a||0)},0))}
+// Ab welchem Tag im Monat gezählt wird (0 = Monat liegt vor dem Start)
+function startDayOf(y,mo){
+  var s=String(data.daily.start||''),k=key(y,mo),sk=s.slice(0,7);
+  if(!s||sk<k)return 1;if(sk>k)return 0;return +s.slice(8,10)||1;
+}
+function dayState(dt){
+  var y=dt.getFullYear(),mo=dt.getMonth(),d=dt.getDate(),base=baseFor(y,mo),s=startDayOf(y,mo)||d,carry=0;
+  for(var i=s;i<d;i++)carry+=base-daySpent(y,mo,i);
+  carry=r2(carry);var spent=daySpent(y,mo,d),start=r2(base+carry),left=r2(start-spent);
+  return {y:y,mo:mo,d:d,base:base,carry:carry,start:start,spent:spent,left:left,last:d===dim(y,mo),tomorrow:r2(base+left)};
+}
+function weekChart(t){
+  var days=[],mx=0;
+  for(var i=6;i>=0;i--){
+    var dt=new Date(t.getFullYear(),t.getMonth(),t.getDate()-i),y=dt.getFullYear(),mo=dt.getMonth(),d=dt.getDate();
+    var sd=startDayOf(y,mo),b=baseFor(y,mo),s=daySpent(y,mo,d),act=sd>0&&d>=sd&&b>0;
+    days.push({dt:dt,b:b,s:s,a:act,today:i===0});if(act)mx=Math.max(mx,b,s);
+  }
+  if(mx<=0)mx=1;
+  var W=360,H=168,T=20,B=36,ch=H-T-B,cw=W/7,bw=28;
+  var g='<svg class="dbars" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Ausgaben der letzten 7 Tage">';
+  days.forEach(function(x,i){
+    var cx=cw*i+cw/2,yb=T+ch;
+    if(x.today)g+='<rect x="'+(cx-cw/2+2)+'" y="2" width="'+(cw-4)+'" height="'+(H-4)+'" rx="10" fill="#EEF0FE"/>';
+    if(!x.a){g+='<text x="'+cx+'" y="'+(yb-6)+'" text-anchor="middle">–</text>';}
+    else{
+      var h=Math.max(x.s/mx*ch,x.s>0?3:0),over=x.s>x.b+0.004,col=over?'#E5484D':'#12A06A',ly=T+ch-x.b/mx*ch;
+      if(h>0)g+='<rect x="'+(cx-bw/2)+'" y="'+(yb-h)+'" width="'+bw+'" height="'+h+'" rx="6" fill="'+col+'"/>';
+      else g+='<rect x="'+(cx-bw/2)+'" y="'+(yb-3)+'" width="'+bw+'" height="3" rx="1.5" fill="#CFE9DD"/>';
+      g+='<line x1="'+(cx-cw/2+5)+'" x2="'+(cx+cw/2-5)+'" y1="'+ly+'" y2="'+ly+'" stroke="#6B7185" stroke-width="1.5" stroke-dasharray="4 3"/>';
+      g+='<text class="val" x="'+cx+'" y="'+(Math.min(yb-h,ly)-5)+'" text-anchor="middle" fill="'+(x.s>0?col:'#9AA0B4')+'" style="fill:'+(x.s>0?col:'#9AA0B4')+'">'+nf0.format(Math.round(x.s))+'\u00a0€</text>';
+    }
+    g+='<text x="'+cx+'" y="'+(H-20)+'" text-anchor="middle"'+(x.today?' class="cur"':'')+'>'+(x.today?'Heute':WD[x.dt.getDay()])+'</text>';
+    g+='<text x="'+cx+'" y="'+(H-6)+'" text-anchor="middle"'+(x.today?' class="cur"':'')+'>'+x.dt.getDate()+'.'+(x.dt.getMonth()+1)+'.</text>';
+  });
+  g+='</svg>';
+  return g+'<div class="leg" style="flex-wrap:wrap;gap:8px 14px;font-size:13px"><span><i style="background:#12A06A"></i>im Rahmen</span><span><i style="background:#E5484D"></i>zu viel</span><span><i style="background:none;border-top:2px dashed #6B7185;border-radius:0;height:0;width:16px"></i>Tagesbudget</span></div>';
+}
+function entryRows(dt,label){
+  var y=dt.getFullYear(),mo=dt.getMonth(),d=dt.getDate(),list=dayEntries(y,mo,d);
+  if(!list.length)return '';
+  var h='<li class="grp">'+label+' · '+eur(daySpent(y,mo,d))+'</li>';
+  list.forEach(function(e,i){var c=CATMAP[e.c]||CATMAP.sonstiges,tm=e.t?new Date(e.t).toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'})+' Uhr':'';
+    h+='<li><span class="ic" style="background:'+c.color+'22">'+c.icon+'</span><span class="nm">'+esc(c.name)+(tm?'<small>'+tm+'</small>':'')+'</span><span class="a">'+eur(e.a)+'</span>'+
+      '<button class="x" aria-label="Löschen" data-del="'+y+'|'+mo+'|'+d+'|'+i+'">✕</button></li>';});
+  return h;
+}
+function renderDay(){
+  var t=new Date(),isCur=(cur.y===t.getFullYear()&&cur.m===t.getMonth());
+  $('dayHero').classList.toggle('hidden',!isCur);$('dayCard').classList.toggle('hidden',!isCur);
+  if(!isCur)return;
+  var st=dayState(t),hero=$('dayHero');
+  hero.classList.toggle('zero',st.base<=0);hero.classList.toggle('neg',st.base>0&&st.left<0);
+  if(st.base<=0){
+    $('dayT').textContent='Tagesbudget';$('dayBig').textContent='Noch offen';
+    $('daySub').textContent='Trag unten dein Nettogehalt und deine Fixkosten ein, dann rechne ich aus, wie viel du pro Tag ausgeben kannst.';
+    $('dayTmrw').classList.add('hidden');$('dayAdd').textContent='Oder Betrag selbst festlegen';
+    $('dayCard').classList.add('hidden');return;
+  }
+  $('dayAdd').textContent='＋ Ausgabe eintragen';$('dayTmrw').classList.remove('hidden');
+  if(st.left>=0){$('dayT').textContent='Heute noch verfügbar';$('dayBig').textContent=eur(st.left);}
+  else{$('dayT').textContent='Tagesbudget überschritten um';$('dayBig').textContent=eur(-st.left);}
+  $('daySub').textContent=st.start>=0?'Heute ausgegeben: '+eur(st.spent)+' von '+eur(st.start):'Heute ausgegeben: '+eur(st.spent)+' · von den Vortagen schon '+eur(-st.start)+' zu viel';
+  $('dayTmrw').textContent=st.last?'Morgen beginnt ein neuer Monat – das Tagesbudget startet neu':'Morgen verfügbar: '+eur(st.tomorrow);
+  $('dayInfo').innerHTML='Pro Tag <b>'+eur(st.base)+'</b>'+(+data.daily.override>0?' (selbst festgelegt)':'')+' · Übertrag von den Vortagen: <b class="'+(st.carry<0?'tneg':'tpos')+'">'+signed(st.carry)+'</b>';
+  $('dayBars').innerHTML=weekChart(t);
+  var yd=new Date(t.getFullYear(),t.getMonth(),t.getDate()-1);
+  var rows=entryRows(t,'Heute')+entryRows(yd,'Gestern');
+  $('dayList').innerHTML=rows||'<li class="grp" style="text-transform:none;letter-spacing:0;font-size:14px;font-weight:500">Heute noch nichts eingetragen. Tipp oben auf „＋ Ausgabe eintragen“.</li>';
+}
+function addEntry(dt,a,c){
+  var m=ensureM(key(dt.getFullYear(),dt.getMonth())),d=dt.getDate();
+  m.days=m.days||{};(m.days[d]=m.days[d]||[]).push({a:a,c:c,t:Date.now()});
+  m.exp[c]=r2((m.exp[c]||0)+a);
+  if(iso(dt)<String(data.daily.start||'9999'))data.daily.start=iso(dt);
+  data.daily.lastCat=c;save();
+}
+function delEntry(y,mo,d,i){
+  var m=getM(key(y,mo));if(!m||!m.days||!m.days[d])return;var e=m.days[d][i];if(!e)return;
+  m.days[d].splice(i,1);if(!m.days[d].length)delete m.days[d];
+  var v=r2((m.exp[e.c]||0)-e.a);if(v>0)m.exp[e.c]=v;else delete m.exp[e.c];
+  save();
+}
+/* Sheet für Eintragen / Einstellen */
+var addDay=0,addCat='lebensm';
+function openSheet2(html){$('sheet2Body').innerHTML=html;$('sheet2Bg').style.display='block';requestAnimationFrame(function(){$('sheet2').classList.add('open')})}
+function closeSheet2(){var a=document.activeElement;if(a&&a.blur)a.blur();$('sheet2').classList.remove('open');$('sheet2Bg').style.display='none'}
+function openAdd(){
+  addDay=0;addCat=VARCATS.indexOf(data.daily.lastCat)>=0?data.daily.lastCat:'lebensm';
+  var chips=VARCATS.map(function(id){var c=CATMAP[id];return '<button data-cat="'+id+'" class="'+(id===addCat?'on':'')+'"><span>'+c.icon+'</span>'+esc(c.name.split(' ')[0])+'</button>'}).join('');
+  openSheet2('<h2 class="shT">Ausgabe eintragen</h2>'+
+    '<div class="seg"><button data-day="0" class="on">Heute</button><button data-day="1">Gestern</button></div>'+
+    '<div class="money big"><input id="addAmt" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0,00" aria-label="Betrag"></div>'+
+    '<div class="chips">'+chips+'</div>'+
+    '<button class="btn primary block" id="addSave">Speichern</button>'+
+    '<p class="hint">Wird unten im Monat auch bei der Kategorie dazugezählt.</p>');
+  setTimeout(function(){var i=$('addAmt');if(i)i.focus()},280);
+}
+function saveAdd(){
+  var a=parseMoney($('addAmt').value);if(!(a>0)){toast('Bitte einen Betrag eintragen.');$('addAmt').focus();return}
+  var t=new Date(),dt=new Date(t.getFullYear(),t.getMonth(),t.getDate()-addDay);
+  addEntry(dt,a,addCat);closeSheet2();buildInputs();renderMonth();
+  var st=dayState(t);
+  toast(eur(a)+' eingetragen ✓ '+(st.left>=0?'Heute noch '+eur(st.left):'Heute '+eur(-st.left)+' drüber'));
+}
+function openSet(){
+  var t=new Date(),p=autoParts(t.getFullYear(),t.getMonth()),o=+data.daily.override||0;
+  var calc=p.inc>0?'Einnahmen <b>'+eur(p.inc)+'</b><br>− Fixkosten <b>'+eur(p.fix)+'</b>'+(p.sp?'<br>− Sparen <b>'+eur(p.sp)+'</b>':'')+
+    '<br>= <b>'+eur(p.avail)+'</b> zum Ausgeben<br>÷ '+p.days+' Tage im '+MONTHS[t.getMonth()]+' = <b>'+eur(p.base)+' pro Tag</b>':
+    'Sobald du unten im Monat dein Nettogehalt und deine Fixkosten einträgst, rechne ich das Tagesbudget automatisch aus.';
+  openSheet2('<h2 class="shT">Tagesbudget einstellen</h2>'+
+    '<p class="sub">So wird es automatisch berechnet:</p><div class="calc">'+calc+'</div>'+
+    '<label class="flabel" for="ovAmt">Oder eigener Betrag pro Tag</label>'+
+    '<div class="money big"><input id="ovAmt" inputmode="decimal" autocomplete="off" placeholder="automatisch" value="'+fmtInput(o)+'"></div>'+
+    '<div class="btnrow" style="flex-direction:column"><button class="btn primary block" id="ovSave">Speichern</button>'+
+    (o>0?'<button class="btn soft block" id="ovAuto">Wieder automatisch berechnen</button>':'')+'</div>'+
+    '<p class="hint" style="text-align:left;margin-top:12px">Was du an einem Tag nicht ausgibst, kommt am nächsten Tag dazu. Gibst du mehr aus, wird es am nächsten Tag abgezogen. Am Monatsersten startet alles neu.</p>');
+}
+$('dayAdd').onclick=function(){if($('dayHero').classList.contains('zero'))openSet();else openAdd()};
+$('daySet').onclick=openSet;
+$('sheet2Bg').onclick=closeSheet2;
+$('dayList').onclick=function(e){
+  var b=e.target.closest('[data-del]');if(!b)return;var p=b.getAttribute('data-del').split('|').map(Number);
+  var en=dayEntries(p[0],p[1],p[2])[p[3]];if(!en)return;
+  if(confirm('Ausgabe '+eur(en.a)+' ('+(CATMAP[en.c]||CATMAP.sonstiges).name+') löschen?')){delEntry(p[0],p[1],p[2],p[3]);buildInputs();renderMonth();toast('Gelöscht')}
+};
+$('sheet2Body').onclick=function(e){
+  var b=e.target.closest('button');if(!b)return;
+  if(b.hasAttribute('data-day')){addDay=+b.getAttribute('data-day');Array.prototype.forEach.call(document.querySelectorAll('#sheet2Body [data-day]'),function(x){x.classList.toggle('on',x===b)});return}
+  if(b.hasAttribute('data-cat')){addCat=b.getAttribute('data-cat');Array.prototype.forEach.call(document.querySelectorAll('#sheet2Body [data-cat]'),function(x){x.classList.toggle('on',x===b)});return}
+  if(b.id==='addSave')saveAdd();
+  if(b.id==='ovSave'){var v=parseMoney($('ovAmt').value);data.daily.override=v>0?v:0;save();closeSheet2();renderMonth();toast(v>0?'Tagesbudget: '+eur(v)+' pro Tag ✓':'Tagesbudget wird automatisch berechnet ✓')}
+  if(b.id==='ovAuto'){data.daily.override=0;save();closeSheet2();renderMonth();toast('Tagesbudget wird automatisch berechnet ✓')}
+};
+$('sheet2Body').addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.id==='addAmt'){e.preventDefault();saveAdd()}});
+// Tageswechsel erkennen (App bleibt offen oder kommt aus dem Hintergrund)
+var lastDay=iso(new Date());
+function checkDay(){var d=iso(new Date());if(d!==lastDay){lastDay=d;now=new Date();if(tab==='month')renderMonth()}}
+document.addEventListener('visibilitychange',function(){if(!document.hidden){checkDay();if(tab==='month')renderMonth()}});
+setInterval(checkDay,60000);
+
 /* ---------- Month view ---------- */
 function buildInputs(){
   var k=key(cur.y,cur.m),m=getM(k)||{inc:{},exp:{}};
@@ -440,7 +652,7 @@ function prevKey(){var y=cur.y,m=cur.m-1;if(m<0){m=11;y--}return {k:key(y,m),nam
 function renderMonth(){
   var k=key(cur.y,cur.m),m=getM(k),t=totals(m);
   $('periodLbl').textContent=MONTHS[cur.m]+' '+cur.y;
-  
+  renderDay();
   var hero=$('hero');hero.classList.toggle('neg',t.rest<0);hero.classList.toggle('zero',t.rest===0);
   $('restBig').textContent=eur(t.rest);
   $('restSub').textContent=!hasData(m)?'Trag unten Einnahmen und Ausgaben ein':t.rest<0?'Achtung: mehr ausgegeben als eingenommen':t.inc?pct(t.rest,t.inc)+' deiner Einnahmen 👍':'';
@@ -573,7 +785,7 @@ function showLastBackup(){$('lastBackup').textContent=data.lastBackup?'Letztes B
 $('exportBtn').onclick=function(){
   var d=new Date(),name='Budget-Backup-'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.json';
   data.lastBackup=d.toISOString();save();
-  var json=JSON.stringify({app:'MeinBudget',version:1,exported:d.toISOString(),months:data.months},null,2);
+  var json=JSON.stringify({app:'MeinBudget',version:2,exported:d.toISOString(),months:data.months,daily:{start:data.daily.start,override:+data.daily.override||0}},null,2);
   var blob=new Blob([json],{type:'application/json'});
   var file;try{file=new File([blob],name,{type:'application/json'})}catch(e){}
   if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
@@ -593,16 +805,22 @@ $('importFile').onchange=function(e){
         if(!/^\d{4}-\d{2}$/.test(k))return;var src=d.months[k]||{},o={inc:{},exp:{}};
         INC.forEach(function(i){var v=+((src.inc||{})[i.id]);if(v)o.inc[i.id]=Math.round(v*100)/100});
         CATS.forEach(function(c){var v=+((src.exp||{})[c.id]);if(v)o.exp[c.id]=Math.round(v*100)/100});
+        if(src.days&&typeof src.days==='object'){var dd={};Object.keys(src.days).forEach(function(dk){
+          var n=+dk;if(!(n>=1&&n<=31)||!Array.isArray(src.days[dk]))return;
+          var arr=src.days[dk].map(function(e){e=e||{};return {a:Math.round((+e.a||0)*100)/100,c:CATMAP[e.c]?e.c:'sonstiges',t:+e.t||0}}).filter(function(e){return e.a>0});
+          if(arr.length)dd[n]=arr;});if(Object.keys(dd).length)o.days=dd;}
         if(hasData(o))clean[k]=o;});
       var n=Object.keys(clean).length;
       if(!confirm('Backup mit '+n+(n===1?' Monat':' Monaten')+' laden? Die Zahlen auf diesem Handy werden dadurch ersetzt.'))return;
-      data.months=clean;save();toast('Backup geladen ✓ ('+n+(n===1?' Monat)':' Monate)'));
+      data.months=clean;
+      if(d.daily&&typeof d.daily==='object'){data.daily.override=+d.daily.override>0?Math.round(+d.daily.override*100)/100:0;if(/^\d{4}-\d{2}-\d{2}$/.test(d.daily.start))data.daily.start=d.daily.start;}
+      save();buildInputs();render();toast('Backup geladen ✓ ('+n+(n===1?' Monat)':' Monate)'));
     }catch(err){alert('Diese Datei ist leider kein gültiges Budget-Backup.')}
   };r.readAsText(f);
 };
 $('wipeBtn').onclick=function(){
   if(confirm('Wirklich ALLE Budget-Daten auf diesem Handy löschen?')&&confirm('Ganz sicher? Das kann man nicht rückgängig machen (außer mit einem Backup).')){
-    data={version:1,months:{}};save();toast('Alle Daten gelöscht');showLastBackup();
+    data={version:2,months:{},daily:{start:iso(new Date()),override:0}};save();toast('Alle Daten gelöscht');showLastBackup();
   }
 };
 
@@ -615,7 +833,7 @@ $('installBtn').onclick=function(){if(!deferred)return;deferred.prompt();deferre
 if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
   window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
 }
-window.addEventListener('storage',function(e){if(e.key===STORE){data=load();if(tab==='month')buildInputs();render()}});
+window.addEventListener('storage',function(e){if(e.key===STORE){data=load();migrate();if(tab==='month')buildInputs();render()}});
 
 /* Start */
 buildInputs();render();
